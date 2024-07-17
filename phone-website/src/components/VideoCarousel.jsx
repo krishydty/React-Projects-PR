@@ -52,7 +52,7 @@ const VideoCarousel = () => {
     let currentProgress = 0;
     let span = videoSpanRef.current;
 
-    if (span[videoId]) {
+    if (span[videoId] && videoRef.current[videoId]) {
       // animation to move the indicator
       let anim = gsap.to(span[videoId], {
         onUpdate: () => {
@@ -99,10 +99,12 @@ const VideoCarousel = () => {
 
       // update the progress bar
       const animUpdate = () => {
-        anim.progress(
-          videoRef.current[videoId].currentTime /
-            hightlightsSlides[videoId].videoDuration
-        );
+        if (videoRef.current[videoId]) {
+          anim.progress(
+            videoRef.current[videoId].currentTime /
+              hightlightsSlides[videoId].videoDuration
+          );
+        }
       };
 
       if (isPlaying) {
@@ -118,9 +120,13 @@ const VideoCarousel = () => {
   useEffect(() => {
     if (loadedData.length > 3) {
       if (!isPlaying) {
-        videoRef.current[videoId].pause();
+        if (videoRef.current[videoId]) {
+          videoRef.current[videoId].pause();
+        }
       } else {
-        startPlay && videoRef.current[videoId].play();
+        if (startPlay && videoRef.current[videoId]) {
+          videoRef.current[videoId].play();
+        }
       }
     }
   }, [startPlay, videoId, isPlaying, loadedData]);
